@@ -29,16 +29,16 @@ class Mailer {
 	var $Message = array();
 	var $Error = '';
 
-	/* 
+	/*
 	 * Create mailer object
  	 *
 	 * Create the mailer object
 	 *
 	 * @param config - Array of config value pairs.  config=>value
 	 * @param headers - Array of header value pairs.  header=>value
-	 * @return true 
+	 * @return true
 	 */
-	function Mailer($config = array(), $headers = array()) {
+	function __construct($config = array(), $headers = array()) {
 
 		/* Create configuration array */
 		$this->Config['User'] = 'unknown';
@@ -119,15 +119,15 @@ class Mailer {
 	}
 
 
-	/* 
+	/*
 	 * Close mailer object
  	 *
 	 * Closed the mailer object
 	 *
-	 * @return true 
+	 * @return true
 	 */
 	function close() {
-		
+
 		$this->Config = array();
 		$this->Message = array();
 		$this->Error = '';
@@ -136,7 +136,7 @@ class Mailer {
 	}
 
 
-	/* 
+	/*
 	 * Send email
  	 *
 	 * Contructed and send the email
@@ -175,7 +175,7 @@ class Mailer {
 			$this->Error = 'Empty body not allowed';
 			return false;
 		}
-		
+
 		/* Set headers - Replace globals */
 		if (isset($headers)) {
 			if (is_array($headers)) {
@@ -238,7 +238,7 @@ class Mailer {
 			/* Open MIME */
 			$this->Message['body'] = "This is a multi-part message in MIME format\n\n";
 			$this->Message['body'] .= '--' . $this->Message['boundary'] . "\n";
-			
+
 			/* Open MIME ALT */
 			if (($attachment_attach > 0) && (! empty($body_html))) {
 				$this->Message['body'] .= "Content-Type: multipart/alternative;\n\tboundary=\"" . $this->Message['boundary']  . "_ALT\"\n\n";
@@ -316,7 +316,7 @@ class Mailer {
 			$this->Message['body'] .= '--' . $this->Message['boundary'] . "--\n";
 
 		}
-			
+
 		/* Send mail */
 		if (! $this->_send_mail()) {
 			return false;
@@ -330,7 +330,7 @@ class Mailer {
 	}
 
 
-	/* 
+	/*
 	 * Set or append a header
  	 *
 	 * Set or append to a header, only To, CC, Bcc will append values
@@ -381,7 +381,7 @@ class Mailer {
 	}
 
 
-	/* 
+	/*
 	 * Remove a header
  	 *
 	 * Removes give header from the global header array
@@ -394,14 +394,14 @@ class Mailer {
 		if (isset($this->Message['headers'][$header])) {
 			$this->Message['headers'] = $this->_array_element_delete($this->Message['headers'], $header);
 			return true;
-		}	
+		}
 		$this->Error = 'Header is not set';
 		return false;
 
 	}
 
 
-	/* 
+	/*
 	 * Format an email address
  	 *
 	 * Format an email address in full name <email> format
@@ -425,7 +425,7 @@ class Mailer {
 
 	}
 
-	/* 
+	/*
 	 * Generate an unique content id
  	 *
 	 * Generate an unique content id for use with inline attachments
@@ -442,9 +442,9 @@ class Mailer {
 	}
 
 
-	/* 
+	/*
 	 * Attach a file to the email
-	 
+
 	 *
 	 * Attach a file to the email, either attached or inline
 	 *
@@ -475,7 +475,7 @@ class Mailer {
 		/* Encode the data */
 		$struc['encoded_data'] = chunk_split(base64_encode($data), 76, "\n");
 		$data = false; /* free up memory */
-		
+
 		/* Check size of encoded data */
 		if (strlen($struc['encoded_data']) > $this->Config['AttachMaxSize']) {
 			$this->Error = 'Encoded attachment size exceeds maximum size';
@@ -520,7 +520,7 @@ class Mailer {
  	 *
 	 * Clear all attached files
 	 *
-	 * @return boolean - true = success, false = error 
+	 * @return boolean - true = success, false = error
 	 */
 	function attach_clear() {
 
@@ -552,11 +552,11 @@ class Mailer {
 
 		if (($fh = @fopen($file, 'rb')) === false) {
 			$this->Error = 'Unable to open file for read';
-			return false;	
+			return false;
 		}
 		if (($data = fread($fh, filesize($file))) === false) {
 			$this->Error = 'Unable to read file';
-			return false;	
+			return false;
 		}
 		fclose($fh);
 
@@ -569,10 +569,10 @@ class Mailer {
 
 	/*
 	 * Read Mailer error
-	 * 
+	 *
 	 * Read the error the last ran mailer function generated
 	 *
-	 * @return - string - Error 
+	 * @return - string - Error
 	 */
 	function error() {
 
@@ -582,7 +582,7 @@ class Mailer {
 
 	/*
 	 * Send email
-	 * 
+	 *
 	 * Internal mailer function to send the email.  This will use whatever means have been configured to send email.
 	 *
 	 * @return - boolean - true = success, false = error
@@ -599,14 +599,14 @@ class Mailer {
 		}
 
 		if ($this->Config['Mail']['Type'] == 'PHP') {
-			/* 
-			 * Process Mail with PHP internal function 
+			/*
+			 * Process Mail with PHP internal function
 			 */
 			if (! function_exists('mail')) {
 				$this->Error = "Required function \'mail\' not available";
 				return false;
 			}
-			
+
 			/* Check ini settings in Windows */
 			if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 				$smtp_ini = ini_get('SMTP');
@@ -633,7 +633,7 @@ class Mailer {
 			if (is_array($to)) {
 				$to = implode(', ', $to);
 			}
-	
+
 			/* Create additional headers */
 			foreach ($header_order as $key) {
 				if (($key != 'To') && ($key != 'Subject')) {
@@ -654,8 +654,8 @@ class Mailer {
 			}
 
 		} elseif ($this->Config['Mail']['Type'] == 'SMTP') {
-			/* 
-			 * Process Mail with SMTP 
+			/*
+			 * Process Mail with SMTP
 			 */
 			if (! function_exists('fsockopen')) {
 				$this->Error = "Required function 'fsockopen' not available";
@@ -718,7 +718,7 @@ class Mailer {
 				fclose($smtp_sock);
 				return false;
 			}
-			
+
 			/* Start SMTP conversation */
 			fputs($smtp_sock, 'HELO ' . $this->Config['Hostname'] . '\r\n');
 			$smtp_response = fgets($smtp_sock, 4096);
@@ -727,7 +727,7 @@ class Mailer {
 				fclose($smtp_sock);
 				return false;
 			}
-			
+
 			/* Perform Authenication - If username and password set */
 			if ((! empty($this->Config['Mail']['SMTP_Username'])) && (! empty($this->Config['Mail']['SMTP_Password']))) {
 
@@ -738,7 +738,7 @@ class Mailer {
 					fclose($smtp_sock);
 					return false;
 				}
-				
+
 				fputs($smtp_sock, base64_encode($this->Config['Mail']['SMTP_Username']) . "\r\n");
 				$smtp_response = fgets($smtp_sock, 4096);
 				if (substr($smtp_response,0,3) != '334') {
@@ -746,7 +746,7 @@ class Mailer {
 					fclose($smtp_sock);
 					return false;
 				}
-				
+
 				fputs($smtp_sock, base64_encode($this->Config['Mail']['SMTP_Password']) . "\r\n");
 				$smtp_response = fgets($smtp_sock, 4096);
 				if (substr($smtp_response,0,3) != '235') {
@@ -754,17 +754,17 @@ class Mailer {
 					fclose($smtp_sock);
 					return false;
 				}
-			}	
+			}
 
 			/* Send mail from */
 			fputs($smtp_sock, 'MAIL FROM: <' . $from . ">\r\n");
 			$smtp_response = fgets($smtp_sock, 4096);
 			if (substr($smtp_response,0,3) != '250') {
-				$this->Error = 'SMTP Host rejected from address: ' . $smtp_response;	
+				$this->Error = 'SMTP Host rejected from address: ' . $smtp_response;
 				fclose($smtp_sock);
 				return false;
 			}
-			
+
 			/* Send rcpt to */
 			foreach ($to as $item) {
 				fputs($smtp_sock, 'RCPT TO: <' . $item . ">\r\n");
@@ -775,44 +775,44 @@ class Mailer {
 					return false;
 				}
 			}
-			
+
 			/* Send data to start message */
 			fputs($smtp_sock, "DATA\r\n");
 			$smtp_response = fgets($smtp_sock, 4096);
 			if (substr($smtp_response,0,3) != '354') {
-				$this->Error = 'SMTP host rejected data command:' . $smtp_response;	
+				$this->Error = 'SMTP host rejected data command:' . $smtp_response;
 				fclose($smtp_sock);
 				return false;
 			}
-			
+
 			/* Send message headers and body */
 			$message = str_replace("\n", "\r\n", $this->Message['body']);
 			fputs($smtp_sock, $headers . "\r\n" . $message . "\r\n.\r\n");
 			$smtp_response = fgets($smtp_sock,4096);
 			if (substr($smtp_response,0,3) != '250') {
-				$this->Error = 'SMTP error while sending email: ' . $smtp_response;	
+				$this->Error = 'SMTP error while sending email: ' . $smtp_response;
 				fclose($smtp_sock);
 				return false;
 			}
-			
+
 			/* Send quit */
 			fputs($smtp_sock,"QUIT\r\n");
 			$smtp_response = fgets($smtp_sock, 4096);
 			if (substr($smtp_response,0,3) != '221') {
-				$this->Error = 'SMTP Host rejected quit command: ' . $smtp_response;	
+				$this->Error = 'SMTP Host rejected quit command: ' . $smtp_response;
 				fclose($smtp_sock);
 				return false;
 			}
-			
+
 			/* Close connection */
 			fclose($smtp_sock);
 
 
 		} elseif ($this->Config['Mail']['Type'] == 'DirectInject') {
-			/* 
-			 * Process Mail with DirectInject 
+			/*
+			 * Process Mail with DirectInject
 			 */
-			
+
 			/* Check and Process DirectInject path */
 			if (empty($this->Config['Mail']['DirectInject_Path'])) {
 				$this->Error = 'No DirectInject_Path defined';
@@ -891,8 +891,8 @@ class Mailer {
 
 
 	/*
-	 * RFC SMTP Date 
-	 * 
+	 * RFC SMTP Date
+	 *
 	 * Returns a RFC SMTP formatted date string
 	 *
 	 * @param - string - input date
@@ -911,12 +911,12 @@ class Mailer {
 
 	/*
 	 * Array Element Delete
-	 * 
+	 *
 	 * Deletes an element from an array
 	 *
 	 * @param - array - array to modify
 	 * @param - string - key to delete
-	 * @return - array 
+	 * @return - array
 	 */
 	function _array_element_delete($input, $search) {
 
@@ -930,19 +930,19 @@ class Mailer {
 					}
 				}
 			}
-		}	
+		}
 
 		return $output;
-	
+
 	}
 
 
 	/*
-	 * Sets MIME message boundary 
-	 * 
+	 * Sets MIME message boundary
+	 *
 	 * Sets the MIME message boundary in the mailer object
 	 *
-	 * @return - true 
+	 * @return - true
 	 */
 	function _boundary_set() {
 

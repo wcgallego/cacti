@@ -729,7 +729,7 @@ function snmpagent_notification( $notification, $mib, $varbinds, $severity = SNM
 				$save["manager_id"]		= $notification_manager["id"];
 				$save["notification"]	= $notification;
 				$save["mib"]			= $mib;
-				$save["varbinds"]		= mysql_real_escape_string( substr($log_notification_varbinds, 0, 5000) );
+				$save["varbinds"]		= mysqli_real_escape_string( substr($log_notification_varbinds, 0, 5000) );
 				sql_save( $save, 'snmpagent_notifications_log');
 
 				/* log the net-snmp command for Cacti admins if they wish for */

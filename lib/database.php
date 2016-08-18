@@ -535,7 +535,7 @@ function db_update_table ($table, $data, $removecolumns = FALSE, $log = TRUE, $d
 			// Check that column is correct and fix it
 			// FIXME: Need to still check default value
 			$arr = db_fetch_row("SHOW columns FROM `$table` LIKE '" . $column['name'] . "'", $log, $db_conn);
-			if ($column['type'] != $arr['Type'] || (isset($column['NULL']) && ($column['NULL'] ? 'YES' : 'NO') != $arr['Null']) 
+			if ($column['type'] != $arr['Type'] || (isset($column['NULL']) && ($column['NULL'] ? 'YES' : 'NO') != $arr['Null'])
 							    || (isset($column['auto_increment']) && ($column['auto_increment'] ? 'auto_increment' : '') != $arr['Extra'])) {
 				$sql = 'ALTER TABLE `' . $table . '` CHANGE `' . $column['name'] . '` `' . $column['name'] . '`';
 				if (isset($column['type']))
@@ -811,9 +811,9 @@ function sql_save($array_items, $table_name, $key_cols = 'id', $autoinc = TRUE, 
 	}
 
 	while (list($key, $value) = each($array_items)) {
-		if (strstr($cols[$key], 'int') !== false || 
-			strstr($cols[$key], 'float') !== false || 
-			strstr($cols[$key], 'double') !== false || 
+		if (strstr($cols[$key], 'int') !== false ||
+			strstr($cols[$key], 'float') !== false ||
+			strstr($cols[$key], 'double') !== false ||
 			strstr($cols[$key], 'decimal') !== false) {
 			if (empty($value)) {
 				$array_items[$key] = 0;
@@ -828,7 +828,7 @@ function sql_save($array_items, $table_name, $key_cols = 'id', $autoinc = TRUE, 
 	$replace_result = _db_replace($db_conn, $table_name, $array_items, $key_cols, $autoinc);
 
 	if ($replace_result === false) {
-		cacti_log("ERROR: SQL Save Command Failed for Table '$table_name'.  Error was '" . mysql_error($db_conn) . "'", false);
+		cacti_log("ERROR: SQL Save Command Failed for Table '$table_name'.  Error was '" . mysqli_error($db_conn) . "'", false);
 		return FALSE;
 	}
 

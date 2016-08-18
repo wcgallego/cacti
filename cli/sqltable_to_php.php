@@ -54,7 +54,7 @@ foreach($parms as $parameter) {
 }
 
 if ($table == '') {
-	
+
 } else {
 	print sqltable_to_php($table, $create);
 }
@@ -62,7 +62,7 @@ if ($table == '') {
 function sqltable_to_php ($table, $create) {
 	global $config, $database_default;
 	include_once($config['library_path'] . '/database.php');
-	$result = db_fetch_assoc('SHOW tables FROM `' . $database_default . '`') or die (mysql_error());
+	$result = db_fetch_assoc('SHOW tables FROM `' . $database_default . '`') or die (mysqli_error());
 	$tables = array();
 	$text = '';
 	foreach($result as $index => $arr) {
